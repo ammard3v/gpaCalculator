@@ -84,90 +84,72 @@ const gradeOptions = [
   "F",
 ];
 
-// Function to handle semester form submission
-function handleSemesterSubmit() {
-  let semesterNumber = parseInt(
-    document.getElementById("semesterNumber").value
-  );
+document.addEventListener("DOMContentLoaded", () => {
+  const resultsContainer = document.getElementById("resultsContainer");
 
-  // Validate input
-  if (isNaN(semesterNumber) || semesterNumber < 1 || semesterNumber > 8) {
-    alert("Please enter a valid semester number between 1 and 8.");
-    return;
-  }
+  for (let semesterNumber = 1; semesterNumber <= 8; semesterNumber++) {
+    const semesterDiv = document.createElement("div");
+    semesterDiv.classList.add("semesterForm");
 
-  // Hide semester form
-  document.getElementById("semesterForm").style.display = "none";
+    const totalCredits = defaultCredits[semesterNumber].reduce(
+      (acc, credit) => acc + credit,
+      0
+    );
 
-  // Display subject form
-  document.getElementById("subjectForm").style.display = "block";
+    let formHtml = `<h3>Semester ${semesterNumber}</h3>`;
+    formHtml += "<table>";
+    formHtml +=
+      '<thead><tr><th style="text-align:left;">Subject</th><th>Credit</th><th>Grade</th></tr></thead>';
+    formHtml += "<tbody>";
 
-  // Populate subject form based on the selected semester
-  populateSubjectForm(semesterNumber);
-}
-function populateSubjectForm(semesterNumber) {
-  let numSubjects = defaultSubjects[semesterNumber].length;
-
-  // Calculate total credits
-  let totalCredits = defaultCredits[semesterNumber].reduce(
-    (acc, credit) => acc + credit,
-    0
-  );
-
-  // Generate table dynamically
-  let tableHtml = "<table>";
-  tableHtml +=
-    '<thead><tr><th style="text-align:left;">Subject</th><th>Credit</th><th>Grade</th></tr></thead>';
-  tableHtml += "<tbody>";
-
-  // Generate table rows with default values for the selected semester
-  for (let i = 0; i < numSubjects; i++) {
-    tableHtml += `<tr>`;
-    tableHtml += `<td>${defaultSubjects[semesterNumber][i]}</td>`;
-    tableHtml += `<td>${defaultCredits[semesterNumber][i]}</td>`;
-    tableHtml += `<td><select name="grade${i + 1}" required>`;
-
-    // Populate grade options
-    gradeOptions.forEach((option) => {
-      tableHtml += `<option value="${option}">${option}</option>`;
+    defaultSubjects[semesterNumber].forEach((subject, index) => {
+      formHtml += `<tr>`;
+      formHtml += `<td>${subject}</td>`;
+      formHtml += `<td >${defaultCredits[semesterNumber][index]}</td>`;
+      formHtml += `<td><select name="grade${semesterNumber}-${
+        index + 1
+      }" required>`;
+      gradeOptions.forEach((option) => {
+        formHtml += `<option value="${option}">${option}</option>`;
+      });
+      formHtml += `</select></td>`;
+      formHtml += `</tr>`;
     });
 
-    tableHtml += `</select></td>`;
-    tableHtml += `</tr>`;
+    formHtml += "</tbody>";
+    formHtml += "</table>";
+    formHtml += `<button class="submit-button" type="button" onclick="calculateGPA(${semesterNumber}, this)"><strong>Calculate CGPA</strong></button>`;
+    formHtml += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Sem Credits: ${totalCredits}</strong>`;
+    formHtml += `<div class="gpaDisplay"></div>`;
+
+    semesterDiv.innerHTML = formHtml;
+    resultsContainer.appendChild(semesterDiv);
   }
 
-  tableHtml += "</tbody>";
-  tableHtml += "</table>";
+  // Add initial final summary container with default values
+  const summaryContainer = document.createElement("div");
+  summaryContainer.id = "summaryContainer";
+  summaryContainer.innerHTML = `
+    <h3 style="color:green;">FINAL CERT:</h3>
+    <p><strong>Total Cr&nbsp;&nbsp;: 0</strong></p>
+    <p><strong>Total SGPA : 0.00</strong></p>
+    <p><strong>CGPA: 0.00</strong></p>
+  `;
+  resultsContainer.appendChild(summaryContainer);
+});
 
-  // Add GPA calculation button
-  tableHtml +=
-    '<button class="submit-button" type="button" onclick="calculateCGPA()">Calculate GPA</button>';
-  // Add Back button
-  tableHtml +=
-    '<button class="exit-button" type="button" onclick="handleBackButton()">Back</button>';
-  // Display total credits
-  tableHtml += `&nbsp;&nbsp;&nbsp;Total Credits: ${totalCredits}`;
-  // Display table and GPA display
-  document.getElementById("tableContainer").innerHTML = tableHtml;
-  document.getElementById("gpaDisplay").innerHTML = ""; // Clear GPA display
-}
-// Function to calculate GPA
-function calculateCGPA() {
-  let semesterNumber = parseInt(
-    document.getElementById("semesterNumber").value
-  );
-  let tableRows = document.querySelectorAll("tbody tr");
+function calculateGPA(semesterNumber, button) {
+  let formContainer = button.parentElement;
+  let tableRows = formContainer.querySelectorAll("tbody tr");
   let totalCredits = 0;
   let totalWeightedGradePoints = 0;
 
-  // Iterate through table rows to calculate GPA
   tableRows.forEach((row, index) => {
-    let grade = document
-      .querySelector(`select[name=grade${index + 1}]`)
+    let grade = row
+      .querySelector(`select[name=grade${semesterNumber}-${index + 1}]`)
       .value.toUpperCase();
-    let credit = defaultCredits[semesterNumber][index]; // Get credit from defaultCredits array
+    let credit = defaultCredits[semesterNumber][index];
 
-    // Validate grade and calculate grade points
     let gradePointMapping = {
       A: 4.0,
       "A-": 3.7,
@@ -201,23 +183,66 @@ function calculateCGPA() {
     }
   });
 
-  // Calculate GPA only if there are valid credits
   if (totalCredits > 0) {
     let gpa = totalWeightedGradePoints / totalCredits;
+    let gpaDisplay = `<p><strong>GPA: <span class="gpa-value">${gpa.toFixed(
+      2
+    )}</span></strong></p>`;
+    formContainer.querySelector(".gpaDisplay").innerHTML = gpaDisplay;
 
-    // Create GPA display HTML
-    let gpaDisplay = `<p><strong>CGPA: ${gpa.toFixed(2)}</strong></p>`;
+    // Change color based on GPA value
+    let gpaValueElement = formContainer.querySelector(".gpa-value");
+    if (gpa >= 3.0) {
+      gpaValueElement.style.color = "green";
+    } else {
+      gpaValueElement.style.color = "red";
+    }
 
-    // Replace existing GPA display
-    document.getElementById("gpaDisplay").innerHTML = gpaDisplay;
+    // Update final summary
+    updateFinalSummary();
   } else {
     alert("No valid credits entered to calculate GPA.");
   }
 }
-function handleBackButton() {
-  // Show semester form
-  document.getElementById("semesterForm").style.display = "block";
 
-  // Hide subject form
-  document.getElementById("subjectForm").style.display = "none";
+function updateFinalSummary() {
+  let totalCredits = 0;
+  let totalWeightedGradePoints = 0;
+  let totalGPAWeightedSum = 0;
+  let totalGPA = 0;
+  let semestersCount = 0;
+
+  const gpaDisplays = document.querySelectorAll(".gpaDisplay p");
+  gpaDisplays.forEach((gpaDisplay, semesterIndex) => {
+    const gpaText = gpaDisplay.innerText.match(/GPA: (\d+\.\d+)/);
+    if (gpaText) {
+      const gpa = parseFloat(gpaText[1]);
+      const semesterCredits = defaultCredits[semesterIndex + 1].reduce(
+        (acc, credit) => acc + credit,
+        0
+      );
+      totalCredits += semesterCredits;
+      totalWeightedGradePoints += gpa * semesterCredits;
+      totalGPAWeightedSum += gpa;
+      semestersCount++;
+    }
+  });
+
+  if (totalCredits > 0) {
+    totalGPA = totalWeightedGradePoints / totalCredits;
+  }
+
+  const summaryContainer = document.getElementById("summaryContainer");
+
+  // Change color based on CGPA value
+  let cgpaColor = totalGPA >= 3.7 ? "green" : "red";
+
+  summaryContainer.innerHTML = `
+    <h3 style="color:green;">FINAL CERT:</h3>
+    <p><strong>Total Cr&nbsp;&nbsp;:${totalCredits}</strong></p>
+    <p><strong>Total SGPA: ${totalGPAWeightedSum.toFixed(2)}</strong></p>
+    <p><strong>CGPA: <span class="cgpa-value" style="color: ${cgpaColor};">${totalGPA.toFixed(
+    2
+  )}</span></strong></p>
+  `;
 }
