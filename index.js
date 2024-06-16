@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formHtml += "</tbody>";
     formHtml += "</table>";
     formHtml += `<button class="submit-button" type="button" onclick="calculateGPA(${semesterNumber}, this)"><strong>Calculate CGPA</strong></button>`;
-    formHtml += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Sem Credits: ${totalCredits}</strong>`;
+    formHtml += `&nbsp;&nbsp;&nbsp;<strong>Sem Credits: ${totalCredits}</strong>`;
     formHtml += `<div class="gpaDisplay"></div>`;
 
     semesterDiv.innerHTML = formHtml;
