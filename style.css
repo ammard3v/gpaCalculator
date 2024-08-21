@@ -1,92 +1,93 @@
+*{
+  font-family: 'Trebuchet MS',Arial, sans-serif;
+}
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   line-height: 1.6;
-  background-color: #ffffff;
+  background-color: #f4f4f4;
   margin: 0;
   padding: 20px;
 }
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  background-color: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #ffffff;
-}
+
 h2 {
   text-align: center;
-  color: #333;
+  color: #444;
   margin-bottom: 20px;
 }
-.boxed-title {
-  background-color: green;
-  padding: 15px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-.boxed-title p {
-  color: green;
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 20px;
+
+h3, p {
+  padding: 0;
   margin: 0;
 }
-.semesterForm {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+
+.sem-credits {
+  padding-top:10px;
+  font-size: 16px;
+  font-weight: bold;
 }
+.gpaDisplay {
+  text-align: right;
+  color: #333;
+}
+.semesterForm, #summaryContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
-th,
-td {
-  padding: 10px;
-  border: 1px solid #ccc;
-  text-align: left;
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
 }
+
 th {
-  background-color: #f0f0f0;
-  font-weight: bold;
+  background-color: #f8f8f8;
+  font-weight: 600;
+  color: #333;
 }
+
 .submit-button {
-  background-color: green;
-  color: white;
+  background-color: #28a745; /* Green */
+  color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
+  border-radius: 5px;
   margin-top: 10px;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
+.submit-button.clicked {
+  background-color: #dc3545;
+}
+
 .submit-button:hover {
-  background-color: #45a049;
+  background-color: #218838;
 }
-.gpaDisplay {
-  margin-top: 10px;
-  text-align: right;
+
+.submit-button.clicked:hover {
+  background-color: #c82333;
 }
-#summaryContainer {
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 20px;
-  border-top: 1px solid #ffffff;
-  /* padding-top: 10px; */
-}
-#summaryContainer h3 {
-  text-align: left;
-  margin-bottom: 10px;
-}
-#summaryContainer p {
-  text-align: left;
-  margin-bottom: 5px;
 }
