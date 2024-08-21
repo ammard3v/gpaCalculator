@@ -58,7 +58,6 @@ const defaultSubjects = {
     "Project IV",
   ],
 };
-
 const defaultCredits = {
   1: [3, 3, 3, 3, 3],
   2: [3, 3, 3, 3, 3, 1],
@@ -69,7 +68,6 @@ const defaultCredits = {
   7: [3, 3, 3, 3, 3],
   8: [3, 3, 3, 4],
 };
-
 const gradeOptions = [
   "A",
   "A-",
@@ -83,29 +81,24 @@ const gradeOptions = [
   "D",
   "F",
 ];
-
 document.addEventListener("DOMContentLoaded", () => {
   const resultsContainer = document.getElementById("resultsContainer");
-
   for (let semesterNumber = 1; semesterNumber <= 8; semesterNumber++) {
     const semesterDiv = document.createElement("div");
     semesterDiv.classList.add("semesterForm");
-
     const totalCredits = defaultCredits[semesterNumber].reduce(
       (acc, credit) => acc + credit,
       0
     );
-
-    let formHtml = `<h3>Semester ${semesterNumber}</h3>`;
+    let formHtml = `<h3 style="text-align:center;padding-bottom:10px;">SEM ${semesterNumber}</h3>`;
     formHtml += "<table>";
     formHtml +=
-      '<thead><tr><th style="text-align:left;">Subject</th><th>Credit</th><th>Grade</th></tr></thead>';
+      '<thead><tr><th style="text-align:left;">SUBJECT</th><th>CREDIT</th><th>GRADE</th></tr></thead>';
     formHtml += "<tbody>";
-
     defaultSubjects[semesterNumber].forEach((subject, index) => {
       formHtml += `<tr>`;
       formHtml += `<td>${subject}</td>`;
-      formHtml += `<td >${defaultCredits[semesterNumber][index]}</td>`;
+      formHtml += `<td>${defaultCredits[semesterNumber][index]}</td>`;
       formHtml += `<td><select name="grade${semesterNumber}-${
         index + 1
       }" required>`;
@@ -115,18 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
       formHtml += `</select></td>`;
       formHtml += `</tr>`;
     });
-
     formHtml += "</tbody>";
     formHtml += "</table>";
-    formHtml += `<button class="submit-button" type="button" onclick="calculateGPA(${semesterNumber}, this)"><strong>Calculate CGPA</strong></button>`;
-    formHtml += `&nbsp;&nbsp;&nbsp;<strong>Sem Credits: ${totalCredits}</strong>`;
+    formHtml += `<button class="submit-button" type="button" onclick="toggleButtonAndCalculateGPA(${semesterNumber}, this)"><strong>Calculate CGPA</strong></button>`;
+    formHtml += `<div class="sem-credits">Sem Credits: ${totalCredits}</div>`;     
     formHtml += `<div class="gpaDisplay"></div>`;
-
     semesterDiv.innerHTML = formHtml;
     resultsContainer.appendChild(semesterDiv);
   }
-
-  // Add initial final summary container with default values
   const summaryContainer = document.createElement("div");
   summaryContainer.id = "summaryContainer";
   summaryContainer.innerHTML = `
@@ -134,22 +123,28 @@ document.addEventListener("DOMContentLoaded", () => {
     <p><strong>Total Cr&nbsp;&nbsp;: 0</strong></p>
     <p><strong>Total SGPA : 0.00</strong></p>
     <p><strong>CGPA: 0.00</strong></p>
+    <p>
+    <span style="color:green;font-weight:bold">Green:</span> 
+    &gt;&nbsp;3 &nbsp;and&nbsp;
+    <span style="color:red;font-weight:bold">Red:</span> &lt;&nbsp;3
+    </p>
   `;
   resultsContainer.appendChild(summaryContainer);
 });
-
+function toggleButtonAndCalculateGPA(semesterNumber, button) {
+  button.classList.toggle('clicked');
+  calculateGPA(semesterNumber, button);
+}
 function calculateGPA(semesterNumber, button) {
   let formContainer = button.parentElement;
   let tableRows = formContainer.querySelectorAll("tbody tr");
   let totalCredits = 0;
   let totalWeightedGradePoints = 0;
-
   tableRows.forEach((row, index) => {
     let grade = row
       .querySelector(`select[name=grade${semesterNumber}-${index + 1}]`)
       .value.toUpperCase();
     let credit = defaultCredits[semesterNumber][index];
-
     let gradePointMapping = {
       A: 4.0,
       "A-": 3.7,
@@ -163,7 +158,6 @@ function calculateGPA(semesterNumber, button) {
       D: 1.0,
       F: 0.0,
     };
-
     if (
       grade in gradePointMapping &&
       !isNaN(credit) &&
@@ -182,67 +176,52 @@ function calculateGPA(semesterNumber, button) {
       return;
     }
   });
-
   if (totalCredits > 0) {
     let gpa = totalWeightedGradePoints / totalCredits;
-    let gpaDisplay = `<p><strong>GPA: <span class="gpa-value">${gpa.toFixed(
-      2
-    )}</span></strong></p>`;
+    let gpaDisplay = `<strong>GPA: <span class="gpa-value">${gpa.toFixed(2)}</span></strong>`;
     formContainer.querySelector(".gpaDisplay").innerHTML = gpaDisplay;
-
-    // Change color based on GPA value
     let gpaValueElement = formContainer.querySelector(".gpa-value");
     if (gpa >= 3.0) {
       gpaValueElement.style.color = "green";
     } else {
       gpaValueElement.style.color = "red";
     }
-
-    // Update final summary
     updateFinalSummary();
   } else {
     alert("No valid credits entered to calculate GPA.");
   }
 }
-
 function updateFinalSummary() {
   let totalCredits = 0;
   let totalWeightedGradePoints = 0;
   let totalGPAWeightedSum = 0;
-  let totalGPA = 0;
   let semestersCount = 0;
-
-  const gpaDisplays = document.querySelectorAll(".gpaDisplay p");
-  gpaDisplays.forEach((gpaDisplay, semesterIndex) => {
+  document.querySelectorAll(".semesterForm").forEach((semesterDiv, index) => {
+    let gpaDisplay = semesterDiv.querySelector(".gpaDisplay");
     const gpaText = gpaDisplay.innerText.match(/GPA: (\d+\.\d+)/);
     if (gpaText) {
       const gpa = parseFloat(gpaText[1]);
-      const semesterCredits = defaultCredits[semesterIndex + 1].reduce(
-        (acc, credit) => acc + credit,
-        0
-      );
+      const semesterCredits = defaultCredits[index + 1].reduce((acc, credit) => acc + credit, 0);
       totalCredits += semesterCredits;
       totalWeightedGradePoints += gpa * semesterCredits;
       totalGPAWeightedSum += gpa;
       semestersCount++;
     }
   });
-
-  if (totalCredits > 0) {
-    totalGPA = totalWeightedGradePoints / totalCredits;
-  }
-
+  let finalCGPA = totalCredits > 0 ? totalWeightedGradePoints / totalCredits : 0;
+  let finalSGPA = semestersCount > 0 ? totalGPAWeightedSum / semestersCount : 0;
   const summaryContainer = document.getElementById("summaryContainer");
-
-  // Change color based on CGPA value
-  let cgpaColor = totalGPA >= 3.7 ? "green" : "red";
-
+  let cgpaColor = finalCGPA >= 3.7 ? "green" : "red";
   summaryContainer.innerHTML = `
-    <h3 style="color:green;">FINAL CERT:</h3>
-    <p><strong>Total Cr&nbsp;&nbsp;:${totalCredits}</strong></p>
-    <p><strong>Total SGPA: ${totalGPAWeightedSum.toFixed(2)}</strong></p>
-    <p><strong>CGPA: <span class="cgpa-value" style="color: ${cgpaColor};">${totalGPA.toFixed(
-    2
-  )}</span></strong></p>
+  <h3 style="color:green;">FINAL CERT:</h3>
+  <p><strong>Total Cr&nbsp;&nbsp;: ${totalCredits}</strong></p>
+  <p><strong>Total SGPA: ${finalSGPA.toFixed(2)}</strong></p>
+  <p><strong>CGPA: <span class="cgpa-value" style="color: ${cgpaColor};">${finalCGPA.toFixed(2)}</span></strong></p>
+  <p>
+  <span style="color:green;font-weight:bold">GREEN:</span> 
+  &gt;&nbsp;3 &nbsp;and&nbsp;
+  <span style="color:red;font-weight:bold">RED:</span> &lt;&nbsp;3
+  </p>
+  <div>Developed by ammard3v</div>
   `;
 }
