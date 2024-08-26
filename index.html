@@ -1,19 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GPA Calculation</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="index.js" defer></script>
-  </head>
-  <body>
-    
-    <div class="container">
-      <div class="boxed-title"> 
-      </div>
-      <div id="resultsContainer"></div>
-    </div>
-  </body>
-</html>
+    <script src="index.js" type="module" defer></script>
+    <link href="style.css" rel="stylesheet">
+    <style>
+        .js-enabled {
+            display: none;
+        }
 
+        .js-enabled .content {
+            display: block;
+        }
+
+        .no-js {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <noscript>
+        <div class="no-js">
+            <p>JavaScript is disabled. Please enable JavaScript to view the content.</p>
+        </div>
+    </noscript>
+    <div class="js-enabled">
+        <div class="container">
+            <div class="dropdown-container">
+                <div id="box0">
+                    <h3 for="semesterSelect">Select Semester:</h3>
+                    <select id="semesterSelect" style="padding: 10px 15px; display: inline-block; border: 2px solid white; border-radius: 5px">
+                        <option value="">-- Manual --</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+            </div>
+            <div id="resultsContainer"></div>
+            <div id="manualIN">
+                <h3>Enter sGPA Values</h3>
+                <form id="gpaInputForm">
+                    <div id="left">
+                        <label for="gpa1">Semester 1:</label>
+                        <input type="number" id="gpa1">
+                        <label for="gpa2">Semester 2:</label>
+                        <input type="number" id="gpa2">
+                        <label for="gpa3">Semester 3:</label>
+                        <input type="number" id="gpa3">
+                        <label for="gpa4">Semester 4:</label>
+                        <input type="number" id="gpa4">
+                    </div>
+                    <div id="right">
+                        <label for="gpa5">Semester 5:</label>
+                        <input type="number" id="gpa5">
+                        <label for="gpa6">Semester 6:</label>
+                        <input type="number" id="gpa6">
+                        <label for="gpa7">Semester 7:</label>
+                        <input type="number" id="gpa7">
+                        <label for="gpa8">Semester 8:</label>
+                        <input type="number" id="gpa8">
+                    </div>
+                    <button type="button" onclick="calculateTotalGPA()">Calculate</button>
+                </form>
+                <div id="here"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
