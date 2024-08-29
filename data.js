@@ -1,4 +1,3 @@
-// Define default subjects for each semester
 export const defaultSubjects = {
   1: [
     "English",
@@ -60,7 +59,6 @@ export const defaultSubjects = {
   ],
 };
 
-// Define default credits for each semester
 export const defaultCredits = {
   1: [3, 3, 3, 3, 3],
   2: [3, 3, 3, 3, 3, 1],
@@ -72,7 +70,6 @@ export const defaultCredits = {
   8: [3, 3, 3, 4],
 };
 
-// Define grade options
 export const gradeOptions = [
   "A",
   "A-",
@@ -86,4 +83,3 @@ export const gradeOptions = [
   "D",
   "F",
 ];
-
