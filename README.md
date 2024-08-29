@@ -1,4 +1,5 @@
 # gpaCalculator
 only for BCA ( Pokhara University ) 
 
-[TRY HERE](https://ammarkunwar.github.io/gpaCalculator/)
+[TRY HERE](https://ammard3v.github.io/gpaCalculator/)
+
