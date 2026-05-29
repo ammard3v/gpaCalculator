@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ProCGPA | Semester & Cumulative Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9f0fc 0%, #d9e3f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #0a2540;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 2.5rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f2b3d, #1b4a6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .sub {
+            color: #2c5a7a;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        .selector-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eef2f8;
+        }
+
+        .semester-switch {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .semester-switch label {
+            font-weight: 600;
+            color: #1f5e8e;
+        }
+
+        select {
+            background: #f8fafd;
+            border: 1.5px solid #cfdfed;
+            border-radius: 60px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #0a2b3e;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #2c7ab1;
+            box-shadow: 0 0 0 3px rgba(44, 122, 177, 0.2);
+        }
+
+        .overall-btn {
+            background: #1f6392;
+            border: none;
+            color: white;
+            border-radius: 60px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .overall-btn:hover {
+            background: #0e4a6e;
+            transform: translateY(-1px);
+        }
+
+        .main-panel {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eef2fa;
+            transition: all 0.2s;
+        }
+
+        .semesterForm {
+            animation: fadeSlide 0.25s ease-out;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: #164863;
+            border-left: 6px solid #2c7ab1;
+            padding-left: 1rem;
+        }
+
+        .subject-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .subject-table thead tr {
+            background: #eef3fc;
+            border-bottom: 1px solid #dce7f0;
+        }
+
+        .subject-table th {
+            text-align: left;
+            padding: 1rem 1rem;
+            font-weight: 700;
+            color: #1f4e6e;
+        }
+
+        .subject-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+
+        .subject-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .grade-select {
+            background: #f3f9ff;
+            border-radius: 30px;
+            padding: 0.5rem 0.9rem;
+            border: 1px solid #cbdde9;
+            font-weight: 500;
+            width: auto;
+            min-width: 80px;
+            cursor: pointer;
+        }
+
+        .credit-badge {
+            background: #eef3fc;
+            display: inline-block;
+            text-align: center;
+            font-weight: 600;
+            color: #0e4b6e;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+        }
+
+        .sem-credits {
+            background: #eff6fe;
+            padding: 0.7rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 1rem 0 1rem 0;
+            font-weight: 600;
+            color: #005c8a;
+        }
+
+        .submit-button {
+            background: linear-gradient(95deg, #26648b, #1d5578);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 0.5rem 0 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(95deg, #1b5479, #12415f);
+            transform: scale(0.98);
+        }
+
+        .gpaDisplay {
+            margin-top: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .gpa-value {
+            font-weight: 800;
+            font-size: 1.6rem;
+            background: #f0f6fe;
+            padding: 0.2rem 1rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+
+        .green {
+            color: #158551;
+        }
+
+        .red {
+            color: #c2412c;
+        }
+
+        .overall-panel {
+            background: #fbfeff;
+            border-radius: 1.8rem;
+            padding: 1rem 0;
+        }
+
+        .cgpa-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #16435c;
+        }
+
+        .credit-input-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0 1.8rem 0;
+            background: #f8fafd;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+        }
+
+        .semester-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            padding: 1rem 1.2rem;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2edf7;
+        }
+
+        .semester-label {
+            font-weight: 700;
+            min-width: 80px;
+            color: #1f5e8e;
+            font-size: 1.05rem;
+        }
+
+        .input-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            color: #2c5a7a;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            padding: 0.6rem 1rem;
+            border-radius: 60px;
+            border: 1.5px solid #cfdfed;
+            text-align: center;
+            font-weight: 500;
+            width: 110px;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #2c7ab1;
+            box-shadow: 0 0 0 3px rgba(44, 122, 177, 0.1);
+        }
+
+        .input-group input.error {
+            border-color: #c2412c;
+            background: #fff5f5;
+        }
+
+        .credit-display {
+            background: #eef3fc;
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-weight: 600;
+            color: #0e4b6e;
+            font-size: 0.9rem;
+        }
+
+        .calc-cgpa {
+            background: #1f6e43;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .calc-cgpa:hover {
+            background: #0d5534;
+            transform: translateY(-2px);
+        }
+
+        .overall-results {
+            background: linear-gradient(135deg, #e9f3e9, #dce8e0);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .overall-results strong {
+            font-size: 1.8rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .info-note {
+            font-size: 0.85rem;
+            background: #eef3fc;
+            padding: 10px 15px;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            color: #1f5e8e;
+        }
+
+        .formula-badge {
+            background: #1f6392;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #5b7c9b;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .main-panel {
+                padding: 1rem;
+            }
+            .subject-table th, .subject-table td {
+                padding: 0.7rem 0.5rem;
+            }
+            .semester-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .input-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <div class="hero">
+        <h1>📘 ProCGPA · Academic Suite</h1>
+        <div class="sub">Semester-wise GPA calculator + Cumulative CGPA (weighted by credit hours)</div>
+    </div>
+
+    <div class="selector-card">
+        <div class="semester-switch">
+            <label>📌 Select View:</label>
+            <select id="semesterSelect">
+                <option value="" disabled selected>— Choose Semester or Overall —</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+                <option value="overall">📊 Overall CGPA (Credit Hours Weighted)</option>
+            </select>
+        </div>
+        <div>
+            <button class="overall-btn" id="quickOverallBtn">🎯 Quick CGPA View</button>
+        </div>
+    </div>
+
+    <div class="main-panel">
+        <div id="resultsContainer"></div>
+        <div id="overallCGPASection" style="display: none;">
+            <div class="overall-panel">
+                <div class="cgpa-title">📈 Cumulative CGPA Calculator</div>
+                <div class="info-note">
+                    💡 <strong>How it works:</strong> Enter your GPA (0-4) for each semester and the credit hours you earned.<br>
+                    CGPA = (Σ GPA × Credit Hours) / Σ Total Credit Hours
+                </div>
+                <div id="overallInputsContainer" class="credit-input-grid"></div>
+                <button id="calculateOverallCGPA" class="calc-cgpa">✨ Calculate Cumulative CGPA</button>
+                <div id="overallResults" class="overall-results">
+                    <span style="font-weight:500;">📌 Enter GPA values and credit hours above, then click calculate</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>✔ Semester GPA calculated using grade points | Overall CGPA uses credit hour weighting | GPA range: 0.00 - 4.00</footer>
+</div>
+
+<script>
+    // Data embedded directly
+    const defaultSubjects = {
+        1: ["English", "Mathematics I", "Digital Logic Systems", "Computer Fundamentals and Application", "Programming Logic and Techniques"],
+        2: ["Business Communication", "Mathematics II", "Financial Accounting I", "Programming Language in C", "Fundamentals of Electrical and Electronics", "Project I"],
+        3: ["Object Oriented Programming in C++", "Data Structure and Algorithms", "System Analysis and Design", "Financial Accounting II", "Microprocessor"],
+        4: ["Numerical Methods", "Visual Programming", "Operating Systems", "Database Management System", "Computer Graphics and Multimedia Technology", "Project II"],
+        5: ["Computer Architecture", "Java Programming", "Web Technology I", "Mathematical Foundation and Computer Science", "Software Engineering"],
+        6: ["Data Communication and Computer Network", "Fundamentals of Probability and Statistics", "Applied Economics", "Organization and Management", "Web Technology II", "Project III"],
+        7: ["E-Business", "Simulation and Modeling", "Linux", "Internship", "Elective I"],
+        8: ["Mobile Application and Development Technology", "Management Information System", "Elective II", "Project IV"]
+    };
+
+    const defaultCredits = {
+        1: [3, 3, 3, 3, 3],
+        2: [3, 3, 3, 3, 3, 1],
+        3: [3, 3, 3, 3, 3],
+        4: [3, 3, 3, 3, 4, 2],
+        5: [3, 3, 3, 3, 3],
+        6: [3, 3, 3, 3, 3, 3],
+        7: [3, 3, 3, 3, 3],
+        8: [3, 3, 3, 5]
+    };
+
+    const gradeOptions = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F"];
+
+    const gradePointMapping = {
+        'A': 4.0, 'A-': 3.7, 'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+        'C+': 2.3, 'C': 2.0, 'C-': 1.7, 'D+': 1.3, 'D': 1.0, 'F': 0.0
+    };
+
+    // Build all semester forms
+    function buildAllSemesterForms() {
+        const container = document.getElementById("resultsContainer");
+        container.innerHTML = '';
+
+        for (let sem = 1; sem <= 8; sem++) {
+            const semesterDiv = document.createElement("div");
+            semesterDiv.classList.add("semesterForm");
+            semesterDiv.style.display = "none";
+            semesterDiv.id = `semForm${sem}`;
+            
+            const subjects = defaultSubjects[sem];
+            const credits = defaultCredits[sem];
+            if (!subjects || !credits) continue;
+            
+            const totalSemCredits = credits.reduce((a, b) => a + b, 0);
+            
+            let tableHTML = `
+                <h3>📚 Semester ${sem}</h3>
+                <table class="subject-table">
+                    <thead>
+                        <tr><th>📖 Subject</th><th>📘 Credit Hrs</th><th>🎓 Grade</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            subjects.forEach((sub, idx) => {
+                const creditVal = credits[idx];
+                let optionsHtml = '';
+                gradeOptions.forEach(opt => {
+                    optionsHtml += `<option value="${opt}">${opt}</option>`;
+                });
+                tableHTML += `
+                    <tr>
+                        <td><strong>${sub}</strong></td>
+                        <td><span class="credit-badge">${creditVal}</span></td>
+                        <td><select class="grade-select" data-sem="${sem}" data-index="${idx}">${optionsHtml}</select></td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+                <div class="sem-credits">📌 Total Semester Credits: ${totalSemCredits}</div>
+                <button class="submit-button" data-sem="${sem}"><strong>📊 Calculate GPA (Sem ${sem})</strong></button>
+                <div class="gpaDisplay" id="gpaDisplay_sem${sem}"></div>
+            `;
+            semesterDiv.innerHTML = tableHTML;
+            container.appendChild(semesterDiv);
+        }
+        
+        // Attach event listeners
+        for (let sem = 1; sem <= 8; sem++) {
+            const btn = document.querySelector(`.submit-button[data-sem="${sem}"]`);
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    calculateSemesterGPA(sem);
+                });
+            }
+        }
+    }
+    
+    // Calculate GPA for a specific semester
+    function calculateSemesterGPA(semesterNumber) {
+        const creditsArray = defaultCredits[semesterNumber];
+        const semesterDiv = document.getElementById(`semForm${semesterNumber}`);
+        if (!semesterDiv || !creditsArray) return;
+        
+        let totalWeighted = 0;
+        let totalCreditHours = 0;
+        
+        const selects = semesterDiv.querySelectorAll('.grade-select');
+        
+        for (let i = 0; i < selects.length && i < creditsArray.length; i++) {
+            const credit = creditsArray[i];
+            const gradeValue = selects[i].value;
+            const gradePoint = gradePointMapping[gradeValue];
+            if (gradePoint !== undefined && credit > 0) {
+                totalWeighted += gradePoint * credit;
+                totalCreditHours += credit;
+            } else if (credit > 0) {
+                totalCreditHours += credit;
+            }
+        }
+        
+        const gpaDisplayDiv = document.getElementById(`gpaDisplay_sem${semesterNumber}`);
+        if (totalCreditHours > 0) {
+            let gpa = totalWeighted / totalCreditHours;
+            let colorClass = gpa >= 3.0 ? 'green' : 'red';
+            gpaDisplayDiv.innerHTML = `<br><strong>🏆 Semester GPA: <span class="gpa-value ${colorClass}">${gpa.toFixed(2)}</span></strong>`;
+        } else {
+            gpaDisplayDiv.innerHTML = `<br><strong style="color:#c2412c;">⚠️ No valid credits found.</strong>`;
+        }
+    }
+    
+    // Generate input fields for overall CGPA - User enters GPA (0-4) and credit hours
+    function generateOverallInputsGrid() {
+        const container = document.getElementById("overallInputsContainer");
+        container.innerHTML = '';
+        
+        for (let sem = 1; sem <= 8; sem++) {
+            const defaultTotalCredits = defaultCredits[sem] ? defaultCredits[sem].reduce((a, b) => a + b, 0) : 0;
+            const div = document.createElement("div");
+            div.classList.add("semester-row");
+            div.innerHTML = `
+                <div class="semester-label">Semester ${sem}</div>
+                <div class="input-group">
+                    <label>📊 GPA (0-4):</label>
+                    <input type="number" id="gpaSem${sem}" placeholder="GPA" value="" step="0.01" min="0" max="4" class="gpa-input">
+                    <label>📘 Credit Hours:</label>
+                    <input type="number" id="creditsSem${sem}" placeholder="Credits" value="${defaultTotalCredits}" step="0.5" min="0" class="credit-input">
+                    <span class="credit-display">Default: ${defaultTotalCredits} hrs</span>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+        
+        // Add validation for GPA inputs (0-4 range)
+        const gpaInputs = document.querySelectorAll('.gpa-input');
+        gpaInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                let val = parseFloat(this.value);
+                if (this.value !== '' && (isNaN(val) || val < 0 || val > 4)) {
+                    this.classList.add('error');
+                    this.title = 'GPA must be between 0 and 4';
+                } else {
+                    this.classList.remove('error');
+                    this.title = '';
+                }
+            });
+        });
+    }
+    
+    // Calculate overall CGPA using credit hour weighting (user enters GPA and credits)
+    function computeOverallCGPA() {
+        let totalWeightedSum = 0;
+        let totalCreditsSum = 0;
+        let validSemesters = 0;
+        let errors = [];
+        
+        for (let sem = 1; sem <= 8; sem++) {
+            const gpaInput = document.getElementById(`gpaSem${sem}`);
+            const creditsInput = document.getElementById(`creditsSem${sem}`);
+            
+            if (!gpaInput || !creditsInput) continue;
+            
+            let gpaValue = gpaInput.value.trim() === '' ? NaN : parseFloat(gpaInput.value);
+            let creditsValue = creditsInput.value.trim() === '' ? NaN : parseFloat(creditsInput.value);
+            
+            // Skip if both are empty/invalid
+            if (isNaN(gpaValue) && isNaN(creditsValue)) {
+                continue;
+            }
+            
+            // Validate GPA range
+            if (!isNaN(gpaValue) && (gpaValue < 0 || gpaValue > 4)) {
+                errors.push(`Semester ${sem}: GPA must be between 0 and 4 (current: ${gpaValue})`);
+                continue;
+            }
+            
+            // Validate credits
+            if (!isNaN(creditsValue) && creditsValue < 0) {
+                errors.push(`Semester ${sem}: Credit hours cannot be negative`);
+                continue;
+            }
+            
+            // If GPA is empty but credits provided, skip this semester
+            if (isNaN(gpaValue)) {
+                if (!isNaN(creditsValue) && creditsValue > 0) {
+                    errors.push(`Semester ${sem}: GPA value required (credits entered but no GPA)`);
+                }
+                continue;
+            }
+            
+            // If credits are empty or zero, skip
+            if (isNaN(creditsValue) || creditsValue === 0) {
+                if (!isNaN(gpaValue)) {
+                    errors.push(`Semester ${sem}: Credit hours required (GPA entered but no credits)`);
+                }
+                continue;
+            }
+            
+            // Valid semester data
+            if (gpaValue >= 0 && gpaValue <= 4 && creditsValue > 0) {
+                totalWeightedSum += gpaValue * creditsValue;
+                totalCreditsSum += creditsValue;
+                validSemesters++;
+            }
+        }
+        
+        const overallResultsDiv = document.getElementById("overallResults");
+        
+        if (errors.length > 0) {
+            overallResultsDiv.innerHTML = `
+                <div style="color: #c2412c; margin-bottom: 10px;">⚠️ Please fix the following errors:</div>
+                <ul style="text-align: left; margin-left: 20px; color: #c2412c;">
+                    ${errors.map(e => `<li>${e}</li>`).join('')}
+                </ul>
+                <div style="margin-top: 10px;">📌 Ensure each semester has both GPA (0-4) and credit hours filled correctly.</div>
+            `;
+            return;
+        }
+        
+        if (totalCreditsSum === 0 || validSemesters === 0) {
+            overallResultsDiv.innerHTML = `
+                <strong>⚠️ No valid semester data</strong><br>
+                Please enter GPA (0-4) and credit hours for at least one semester.
+                <div style="margin-top: 10px; font-size: 0.9rem;">💡 Example: Semester 1 GPA: 3.5, Credits: 15</div>
+            `;
+            return;
+        }
+        
+        let cgpa = totalWeightedSum / totalCreditsSum;
+        let colorClass = cgpa >= 3.0 ? 'green' : 'red';
+        
+        overallResultsDiv.innerHTML = `
+            <div style="font-size: 1rem; margin-bottom: 0.5rem;">🎓 Cumulative CGPA (Credit Hour Weighted)</div>
+            <strong><span class="gpa-value ${colorClass}" style="font-size: 2rem;">${cgpa.toFixed(3)}</span></strong>
+            <div class="formula-badge">
+                📐 Σ(GPA × Credits) / Σ Credits = ${totalWeightedSum.toFixed(2)} / ${totalCreditsSum} = ${cgpa.toFixed(3)}
+            </div>
+            <div style="margin-top: 12px; font-size: 0.85rem; color: #2c5a7a;">
+                ✅ Based on ${validSemesters} semester(s) with valid data | Total credits: ${totalCreditsSum}
+            </div>
+        `;
+    }
+    
+    // Show/hide based on selection
+    function showSemesterOrOverall(selectedVal) {
+        const overallSection = document.getElementById("overallCGPASection");
+        const semesterForms = document.querySelectorAll(".semesterForm");
+        
+        if (selectedVal === "overall") {
+            overallSection.style.display = "block";
+            semesterForms.forEach(form => form.style.display = "none");
+            generateOverallInputsGrid();
+        } else if (selectedVal && !isNaN(selectedVal)) {
+            overallSection.style.display = "none";
+            const semNumber = parseInt(selectedVal);
+            semesterForms.forEach((form, idx) => {
+                if (idx + 1 === semNumber) {
+                    form.style.display = "block";
+                } else {
+                    form.style.display = "none";
+                }
+            });
+        } else {
+            overallSection.style.display = "none";
+            semesterForms.forEach(form => form.style.display = "none");
+        }
+    }
+    
+    // Initialize everything
+    function init() {
+        buildAllSemesterForms();
+        
+        // Setup event listeners
+        const semesterSelect = document.getElementById("semesterSelect");
+        const calculateOverallBtn = document.getElementById("calculateOverallCGPA");
+        const quickOverallBtn = document.getElementById("quickOverallBtn");
+        
+        semesterSelect.addEventListener("change", (e) => {
+            showSemesterOrOverall(e.target.value);
+        });
+        
+        if (calculateOverallBtn) {
+            calculateOverallBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                computeOverallCGPA();
+            });
+        }
+        
+        if (quickOverallBtn) {
+            quickOverallBtn.addEventListener("click", () => {
+                const selectElem = document.getElementById("semesterSelect");
+                selectElem.value = "overall";
+                showSemesterOrOverall("overall");
+            });
+        }
+        
+        // Initially hide all
+        showSemesterOrOverall("");
+    }
+    
+    // Start the app
+    init();
+</script>
+</body>
+</html>
